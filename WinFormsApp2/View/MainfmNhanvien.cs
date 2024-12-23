@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace QuanLySuShi
 {
-    public partial class MainfmNhanvien : Form
+    public partial class MainfmNhanvien : Form 
     {
         private Button _selected_table = null; // Lưu button đang chọn
         private string current_maphieu_tai_ban = null; // Lưu button đang chọn
@@ -24,16 +24,56 @@ namespace QuanLySuShi
         public MainfmNhanvien()
         {
             InitializeComponent();
+            InitializeData();
+        }
+        #region Initialization
+        private void InitializeData()
+        {
             Loadtable();
             ThucDon.LoadThucdon(cbbthucdon, (Dangnhap.user as NhanVien).MaChiNhanh);
             PhanQuyen();
             LoadDonHang();
         }
-        void LoadDonHang()
+
+        private void LoadTable()
+        {
+            flpTable.Controls.Clear();
+            foreach( var table in Table.Tables)
+            {
+                Button btn = new Button
+                {
+                    Width = Table.btnWidth,
+                    Height = Table.btnHeight,
+                    Text = table.TableName + Environment.NewLine + table.Status,
+                    BackColor = table.Status == "Trống" ? Color.Aqua : Color.Red,
+                    Tag = table
+                };
+                btn.Click += Btn_TableClick;
+                flpTable.Controls.Add(btn);
+            }
+                    
+        }
+        private void LoadDonHang()
         {
             dtgvDonHang.DataSource = PhieudatmonDAO.GetPhieuDatMonChuaLap((Dangnhap.user as NhanVien).MaChiNhanh);
         }
 
+        private void PhanQuyen()
+        {
+            btn_admin.Enabled = (Dangnhap.user as NhanVien).QuanlyChiNhanh;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void Btn_TableClick(object sender, EventArgs e)
+        {
+            _selected_table = sender as Button;
+            Table table = _selected_table.Tag as Table;
+            current_maphieu_tai_ban = PhieudatmonDAO.GetPhieuDatMonByTableId(table.TableID);
+            showPhieudat(current_maphieu_tai_ban);
+        }
         private void thoátToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
