@@ -7,6 +7,15 @@ private void btnThongKeDoanhThu_Click(object sender, EventArgs e)
 
     dgvThongKeDoanhThu.DataSource = thongKeDoanhThu;
 }
+private void btnThongKeKhachHang_Click(object sender, EventArgs e)
+{
+    DateTime fromDate = DateTime.Parse(txtFromDate.Text);
+    DateTime toDate = DateTime.Parse(txtToDate.Text);
+
+    List<KhachHang> khachHangs = NhanVienDAO.GetThongKeKhachHang(fromDate, toDate);
+
+    dgvKhachHang.DataSource = khachHangs;
+}
 
 private void btnThongKeMonAn_Click(object sender, EventArgs e)
 {
